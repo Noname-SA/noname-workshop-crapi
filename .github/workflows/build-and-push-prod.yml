@@ -1,0 +1,31 @@
+name: Build and Publish crAPI Images
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish-images:
+    runs-on: ubuntu-20.04
+    environment: production
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build images
+        run: ./deploy/docker/build-all.sh
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+          VERSION: ${{ secrets.DOCKER_TAG }}
+      - name: Publish images
+        run: |
+          docker push ${DOCKER_REPO}/crapi-web:${VERSION}
+          docker push ${DOCKER_REPO}/crapi-community:${VERSION}
+          docker push ${DOCKER_REPO}/crapi-workshop:${VERSION}
+          docker push ${DOCKER_REPO}/crapi-identity:${VERSION}
+          docker push ${DOCKER_REPO}/mailhog:${VERSION}
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+          VERSION: ${{ secrets.DOCKER_TAG }}
