@@ -15,4 +15,4 @@
 
 set -x
 cd "$(dirname $0)"
-docker build -t crapi/crapi-community:${VERSION:-latest} .
+docker build -t ${DOCKER_REPO}/crapi-community:${VERSION:-latest} .

@@ -17,4 +17,4 @@
 set -x 
 
 cd "$(dirname $0)"
-docker build -t crapi/crapi-web:${VERSION:-latest} .
+docker build -t ${DOCKER_REPO}/crapi-web:${VERSION:-latest} .
