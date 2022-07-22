@@ -18,7 +18,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json
-RUN npm install --silent
+RUN npm install --only=prod --silent
 COPY ./src /app/src
 COPY ./public /app/public
 RUN cp /app/src/config.js.template /app/src/config.js
