@@ -39,7 +39,7 @@ export function* resendMail(param) {
     const ResponseJson = yield fetch(postUrl, {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -79,7 +79,7 @@ export function* verifyVehicle(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ vin, pincode: pinCode }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -117,7 +117,7 @@ export function* getVehicles(param) {
     const userResponseJSON = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -134,7 +134,7 @@ export function* getVehicles(param) {
     const ResponseJson = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -175,7 +175,7 @@ export function* getMechanics(param) {
     const ResponseJson = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -220,7 +220,7 @@ export function* contactMechanic(param) {
     const ResponseJson = yield fetch(postUrl, {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
       body: JSON.stringify({
         mechanic_code: mechanicCode,
         problem_details: problemDetails,
@@ -266,7 +266,7 @@ export function* refreshLocation(param) {
     const ResponseJson = yield fetch(getUrl.replace('<carId>', carId), {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()

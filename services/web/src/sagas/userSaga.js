@@ -55,7 +55,7 @@ export function* logIn(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ email, password }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       if (recievedResponse.ok) return response.json()
@@ -75,7 +75,7 @@ export function* logIn(param) {
     const userResponseJSON = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -119,7 +119,7 @@ export function* signUp(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ name, email, number, password }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       if (recievedResponse.ok) return response
@@ -156,7 +156,7 @@ export function* forgotPassword(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ email }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       if (recievedResponse.ok) return response
@@ -195,7 +195,7 @@ export function* verifyOTP(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ email, otp, password }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       if (recievedResponse.ok) return response
@@ -234,7 +234,7 @@ export function* resetPassword(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ password }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response
@@ -275,7 +275,7 @@ export function* changeEmail(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ old_email, new_email }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -316,7 +316,7 @@ export function* verifyToken(param) {
       headers,
       method: 'POST',
       body: JSON.stringify({ new_email, token }),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -354,7 +354,7 @@ export function* getServices(param) {
     const ResponseJson = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()

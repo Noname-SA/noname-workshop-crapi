@@ -49,7 +49,7 @@ export function* uploadProfilePic(param) {
     const ResponseJson = yield fetch(postUrl, {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
       body: formData,
     }).then(response => {
       recievedResponse = response
@@ -94,7 +94,7 @@ export function* uploadVideo(param) {
     const ResponseJson = yield fetch(postUrl, {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
       body: formData,
     }).then(response => {
       recievedResponse = response
@@ -181,7 +181,7 @@ export function* convertVideo(param) {
     yield fetch(`${getUrl}?video_id=${videoId}`, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()

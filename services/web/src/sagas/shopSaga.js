@@ -38,7 +38,7 @@ export function* getProducts(param) {
     const ResponseJson = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -84,7 +84,7 @@ export function* buyProduct(param) {
     const ResponseJson = yield fetch(postUrl, {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
       body: JSON.stringify({ product_id: productId, quantity: 1 }),
     }).then(response => {
       recievedResponse = response
@@ -125,7 +125,7 @@ export function* getOrders(param) {
     }
     const ResponseJson = yield fetch(getUrl, {
       headers,
-      credentials: 'same-origin',
+      credentials: 'omit',
       method: 'GET',
     }).then(response => {
       recievedResponse = response
@@ -167,7 +167,7 @@ export function* returnOrder(param) {
     }
     const ResponseJson = yield fetch(`${postUrl}?order_id=${orderId}`, {
       headers,
-      credentials: 'same-origin',
+      credentials: 'omit',
       method: 'POST',
     }).then(response => {
       recievedResponse = response
@@ -210,7 +210,7 @@ export function* applyCoupon(param) {
     const CouponJson = yield fetch(postUrl, {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
       body: JSON.stringify({ coupon_code: couponCode }),
     }).then(response => {
       recievedResponse = response
@@ -226,7 +226,7 @@ export function* applyCoupon(param) {
       const ResponseJson = yield fetch(postUrl, {
         headers,
         method: 'POST',
-        credentials: 'same-origin',
+        credentials: 'omit',
         body: JSON.stringify({
           coupon_code: CouponJson.coupon_code,
           amount: parseFloat(CouponJson.amount),
