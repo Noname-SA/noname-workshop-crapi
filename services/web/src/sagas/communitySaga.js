@@ -39,7 +39,7 @@ export function* getPosts(param) {
     const ResponseJson = yield fetch(getUrl, {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -81,7 +81,7 @@ export function* getPostById(param) {
     const ResponseJson = yield fetch(getUrl.replace('<postId>', postId), {
       headers,
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -125,7 +125,7 @@ export function* addPost(param) {
       headers,
       method: 'POST',
       body: JSON.stringify(post),
-      credentials: 'same-origin',
+      credentials: 'omit',
     }).then(response => {
       recievedResponse = response
       return response.json()
@@ -164,7 +164,7 @@ export function* addComment(param) {
     const JsonResponse = yield fetch(postUrl.replace('<postId>', postId), {
       headers,
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'omit',
       body: JSON.stringify({ content: comment }),
     }).then(response => {
       recievedResponse = response
