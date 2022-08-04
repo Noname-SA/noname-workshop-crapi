@@ -179,7 +179,7 @@ services:
 
   mongodb:
     container_name: mongodb
-    image: 'mongo:4.4'
+    image: 'mongo:latest'
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: crapisecretpassword
