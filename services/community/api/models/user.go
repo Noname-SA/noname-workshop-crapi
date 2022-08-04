@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/badoux/checkmail"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 

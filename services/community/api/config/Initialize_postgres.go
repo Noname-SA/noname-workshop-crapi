@@ -19,10 +19,9 @@ import (
 	"log"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 //
@@ -38,7 +37,7 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 
 	if Dbdriver == "postgres" {
 		DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
-		server.DB, err = gorm.Open(Dbdriver, DBURL)
+		server.DB, err = gorm.Open(postgres.Open(DBURL), &gorm.Config{})
 		if err != nil {
 			log.Fatalf("Cannot connect to %s database", err)
 

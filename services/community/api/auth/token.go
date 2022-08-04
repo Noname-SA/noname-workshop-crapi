@@ -24,7 +24,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"crapi.proj/goservice/api/models"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 //ExtractToken return token from Authorization Bearer

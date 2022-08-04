@@ -13,10 +13,8 @@ require (
 	github.com/goonode/mogo v0.0.0-20181028112152-10c38e9be609 // indirect
 	github.com/gorilla/handlers v1.4.2 // indirect
 	github.com/gorilla/mux v1.7.4
-	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/klauspost/compress v1.9.5
-	github.com/lib/pq v1.7.0 // indirect
 	github.com/lithammer/shortuuid v3.0.0+incompatible
 	github.com/oleiade/reflections v1.0.0
 	github.com/pkg/errors v0.8.1
@@ -29,4 +27,6 @@ require (
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/text v0.3.7
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
+	gorm.io/driver/postgres v1.3.8 // indirect
+	gorm.io/gorm v1.23.8 // indirect
 )
