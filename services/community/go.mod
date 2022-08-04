@@ -29,4 +29,5 @@ require (
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/text v0.3.7
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
+	gorm.io/gorm v1.23.8 // indirect
 )

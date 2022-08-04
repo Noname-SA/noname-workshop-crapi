@@ -19,10 +19,9 @@ import (
 	"log"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 //

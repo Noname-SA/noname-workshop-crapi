@@ -21,7 +21,7 @@ import (
 	"html"
 	"strings"
 	"time"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )

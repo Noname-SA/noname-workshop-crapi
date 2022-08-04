@@ -21,7 +21,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 //
