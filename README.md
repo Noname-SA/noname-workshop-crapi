@@ -2,6 +2,9 @@ This project originates here: https://github.com/owasp/crapi
 
 NOTICE: This project has been modified from the original in order to update all dependencies, where possible, and include several fixes that have also been incorporated back into the original project.
 
+
+GitHub history reset on 2022-08-04 in order to have a "clean slate" for our internal use.
+
 # crAPI
 
 **c**ompletely **r**idiculous **API** (crAPI) will help you to understand the
