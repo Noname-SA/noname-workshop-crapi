@@ -162,7 +162,7 @@ public class VehicleServiceImpl implements VehicleService {
         try {
             vehicleDetails = vehicleDetailsRepository.findByUuid(carId);
             if (vehicleDetails!=null) {
-                vehicleDetails.setVehicleLocation(getVehicleLocationList().get(random.nextInt(getVehicleLocationList().size())));
+                //vehicleDetails.setVehicleLocation(getVehicleLocationList().get(random.nextInt(getVehicleLocationList().size())));
                 if (vehicleDetails.getOwner()!=null) {
                     userDetails = userDetailsRepository.findByUser_id(vehicleDetails.getOwner().getId());
                     vehicleLocationForm = new VehicleLocationResponse(carId, 
