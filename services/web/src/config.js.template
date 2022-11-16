@@ -1,6 +1,6 @@
 export const crapienv = {
-    JAVA_MICRO_SERVICES: "identity/",
-    PYTHON_MICRO_SERVICES: "workshop/",
-    GO_MICRO_SERVICES: "community/",
+    JAVA_MICRO_SERVICES: "fm-preventionlab-crapi/identity/",
+    PYTHON_MICRO_SERVICES: "fm-preventionlab-crapi/workshop/",
+    GO_MICRO_SERVICES: "fm-preventionlab-crapi/community/",
 };
 
