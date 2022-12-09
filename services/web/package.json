@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^4.3.0",
+    "@ant-design/icons": "^4.8.0",
     "ant-design": "^1.0.0",
     "antd": "^4.22.3",
     "jsonwebtoken": "^8.5.1",
