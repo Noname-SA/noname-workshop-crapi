@@ -116,7 +116,9 @@ const Shop = (props) => {
           {products.map((product) => (
             <Col span={8} key={product.id}>
               <Card className="product-card" cover={ProductAvatar(product)}>
-                {ProductDescription(product, props.onBuyProduct)}
+                <Meta
+                  description={ProductDescription(product, props.onBuyProduct)}
+                />
               </Card>
             </Col>
           ))}

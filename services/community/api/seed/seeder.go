@@ -21,7 +21,7 @@ import (
 	"time"
 
 	"crapi.proj/goservice/api/models"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

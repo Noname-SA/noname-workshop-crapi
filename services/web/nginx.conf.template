@@ -41,8 +41,7 @@ server {
       ngx.req.read_body()  -- explicitly read the req body
       local body = ngx.req.get_body_data()
       if body then
-        body = ngx.re.gsub(body, "https://"..ngx.var.http_host, "http://${WORKSHOP_SERVICE}")
-        body = ngx.re.gsub(body, "http://"..ngx.var.http_host, "http://${WORKSHOP_SERVICE}")
+        body = ngx.re.gsub(body, "://"..ngx.var.http_host, "://${WORKSHOP_SERVICE}")
         ngx.req.set_body_data(body)
       end
     }
@@ -56,6 +55,10 @@ server {
 
   location /images {
     try_files $uri $uri/ =404;
+  }
+
+  location /.well-known/jwks.json {
+    proxy_pass http://${IDENTITY_SERVICE}/identity/api/auth/jwks.json;
   }
 
   location / {

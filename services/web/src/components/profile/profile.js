@@ -35,7 +35,8 @@ import {
   Form,
   Input,
 } from "antd";
-import { EditOutlined, MoreOutlined, CameraOutlined, UserOutlined } from "@ant-design/icons";
+import { EditOutlined, MoreOutlined, CameraOutlined } from "@ant-design/icons";
+import defaultProficPic from "../../assets/default_profile_pic.png";
 import { VIDEO_NAME_REQUIRED } from "../../constants/messages";
 
 const { Content } = Layout;
@@ -75,9 +76,9 @@ const Profile = (props) => {
         <Menu.Item key="3">Share Video with Community</Menu.Item>
       </Menu>
     ) : (
-      <Menu onClick={(key) => takeVideoAction(key)}>
-        <Menu.Item key="1">Upload Video</Menu.Item>
-      </Menu>
+      <div className="upload-video-button">
+      <Button className="button" type="text" onClick={() => videoInputRef.current.click()}>Upload Video</Button>
+      </div>
     );
   };
 
@@ -92,8 +93,8 @@ const Profile = (props) => {
   );
   const renderProfileDescription = () => (
     <Row gutter={[60, 20]}>
-      <Col flex="230px">
-        <Badge offset={[20, 180]} count={renderChangePicButton()}>
+      <Col flex="200px">
+        <Badge offset={[0, 200]} count={renderChangePicButton()}>
           <input
             type="file"
             hidden
@@ -102,10 +103,9 @@ const Profile = (props) => {
             onChange={uploadProfilePic}
           />
           <Avatar
-            shape="circle"
+            shape="square"
             size={200}
-            src={`/identity/api/v2/avatar/${userData.id}`}
-            icon={<UserOutlined />}
+            src={profileData.profilePicData || defaultProficPic}
           />
         </Badge>
       </Col>

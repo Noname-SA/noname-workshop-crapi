@@ -35,11 +35,20 @@ const PastOrders = (props) => {
   const renderOrderDescription = (order) => (
     <>
       <PageHeader
-        title={`${formatDateFromIso(order.created_on)}, ${
-          order.product.name
-        }, $${order.product.price * order.quantity}`}
-      />
-      <Button
+        title={`$${order.product.name}, $${order.product.price * order.quantity}`}
+	subtitle={`$${formatDateFromIso(order.created_on)}`}
+	
+        extra={[
+          <Button
+            type="primary"
+            shape="round"
+            size="large"
+            key="order-details"
+            onClick={() => props.history.push(`/orders?order_id=${order.id}`)}
+          > Order Details
+          </Button>,
+
+          <Button
             type="primary"
             shape="round"
             icon={order.status === "delivered" && <RollbackOutlined />}
@@ -49,7 +58,9 @@ const PastOrders = (props) => {
             onClick={() => props.returnOrder(order.id)}
           >
             {order.status === "delivered" ? "Return" : order.status}
-          </Button>
+          </Button>,
+        ]}
+      />
     </>
   );
 
@@ -63,12 +74,12 @@ const PastOrders = (props) => {
       <Content>
         <Row gutter={[40, 40]}>
           {pastOrders.map((order) => (
-            <Col span={8} key={order.id}>
+            <Col span={8} key={order && order.id}>
               <Card
                 className="order-card"
-                cover={renderAvatar(order.product.image_url)}
+                cover={renderAvatar(order && order.product.image_url)}
               >
-                {renderOrderDescription(order)}
+                <Meta description={renderOrderDescription(order)} />
               </Card>
             </Col>
           ))}
