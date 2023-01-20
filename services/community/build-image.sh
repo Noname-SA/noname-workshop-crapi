@@ -15,7 +15,7 @@
 
 set -x
 cd "$(dirname $0)"
-docker build -t crapi/crapi-community:${VERSION:-latest} .
+docker build -t ${DOCKER_REPO}/crapi-community:${VERSION:-latest} .
 retVal=$?
 if [ $retVal -ne 0 ]; then
     echo "Error building crapi-community image"
