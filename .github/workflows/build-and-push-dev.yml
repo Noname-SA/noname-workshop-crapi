@@ -3,6 +3,7 @@ on:
   push:
     branches-ignore:
       - main
+      - snyk*
 
 jobs:
   build-and-publish-images:
