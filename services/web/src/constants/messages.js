@@ -16,7 +16,7 @@
 export const PASSWORD_INFO =
   "Password must be of length 8-16 characters having one lower case, one upper case and one numeric character.";
 export const NAME_REQUIRED = "Please enter your full name!";
-export const EMAIL_REQUIRED = "Please enter a valid email!";
+export const EMAIL_REQUIRED = "MAKE SURE TO USE A FAKE EMAIL ADDRESS (eg: neo@thematrix.org)";
 export const PHONE_NO_REQUIRED = "Please enter phone number";
 export const INVALID_PHONE = "Contact number should have only numbers and -";
 export const PASSWORD_REQUIRED = "Please enter your password";
