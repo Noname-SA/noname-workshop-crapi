@@ -14,10 +14,16 @@
 
 package com.crapi.config;
 
+import com.crapi.constant.UserMessage;
 import com.crapi.enums.EStatus;
 import com.crapi.service.Impl.UserDetailsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,78 +31,106 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+enum ApiType {
+  JWT,
+  APIKEY;
+}
 
+@Slf4j
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
-    private static final Logger tokenLogger = LoggerFactory.getLogger(JwtAuthTokenFilter.class);
+  @Autowired private JwtProvider tokenProvider;
 
-    @Autowired
-    private JwtProvider tokenProvider;
+  @Autowired private UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+  /**
+   * @param request
+   * @param response
+   * @param filterChain
+   * @throws ServletException
+   * @throws IOException
+   */
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
 
-    /**
-     * @param request
-     * @param response
-     * @param filterChain
-     * @throws ServletException
-     * @throws IOException
-     */
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        try {
-            String username = getUserFromToken(request);
-            if (username != null &&  !username.equalsIgnoreCase(EStatus.INVALID.toString())){
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication
-                    = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        }catch(Exception e){
-            tokenLogger.error("Can NOT set user authentication -> Message:%d", e);
+    try {
+      String username = getUserFromToken(request);
+      if (username != null && !username.equalsIgnoreCase(EStatus.INVALID.toString())) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (userDetails == null) {
+          log.error("User not found");
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, UserMessage.INVALID_CREDENTIALS);
         }
-
-        filterChain.doFilter(request, response);
+        if (userDetails.isAccountNonLocked()) {
+          UsernamePasswordAuthenticationToken authentication =
+              new UsernamePasswordAuthenticationToken(
+                  userDetails, null, userDetails.getAuthorities());
+          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+          log.error(UserMessage.ACCOUNT_LOCKED_MESSAGE);
+          response.sendError(
+              HttpServletResponse.SC_UNAUTHORIZED, UserMessage.ACCOUNT_LOCKED_MESSAGE);
+        }
+      }
+    } catch (Exception e) {
+      log.error("Can NOT set user authentication -> Message:%d", e);
     }
 
-    /**
-     * @param request
-     * @return jwt token
-     */
-    public String getJwt(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
+    filterChain.doFilter(request, response);
+  }
 
-        //checking token is there or not
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.replace("Bearer ", "");
-        }
-        return null;
+  /**
+   * @param request
+   * @return key/token
+   */
+  public String getToken(HttpServletRequest request) {
+    String authHeader = request.getHeader("Authorization");
+
+    // checking token is there or not
+    if (authHeader != null && authHeader.length() > 7) {
+      return authHeader.substring(7);
     }
+    return null;
+  }
 
-    /**
-     * @param request
-     * @return return username from HttpServletRequest
-     * if request have token we are returning username from request token
-     */
-    public String getUserFromToken(HttpServletRequest request) throws UnsupportedEncodingException {
-
-        String jwt = getJwt(request);
-        if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
-            String username = tokenProvider.getUserNameFromJwtToken(jwt);
-            //checking username from token
-            if (username!=null)
-                return username;
-        }
-        return EStatus.INVALID.toString();
-
+  /**
+   * @param request
+   * @return api type from HttpServletRequest
+   */
+  public ApiType getKeyType(HttpServletRequest request) {
+    String authHeader = request.getHeader("Authorization");
+    ApiType apiType = ApiType.JWT;
+    if (authHeader != null && authHeader.startsWith("ApiKey ")) {
+      apiType = ApiType.APIKEY;
     }
+    return apiType;
+  }
+
+  /**
+   * @param request
+   * @return return username from HttpServletRequest if request have token we are returning username
+   *     from request token
+   */
+  public String getUserFromToken(HttpServletRequest request) throws ParseException {
+    ApiType apiType = getKeyType(request);
+    String token = getToken(request);
+    String username = null;
+    if (token != null) {
+      if (apiType == ApiType.APIKEY) {
+        log.debug("Token is api token");
+        username = tokenProvider.getUserNameFromApiToken(token);
+      } else {
+        log.debug("Token is jwt token");
+        if (tokenProvider.validateJwtToken(token)) {
+          username = tokenProvider.getUserNameFromJwtToken(token);
+        }
+      }
+      // checking username from token
+      if (username != null) return username;
+    }
+    return EStatus.INVALID.toString();
+  }
 }

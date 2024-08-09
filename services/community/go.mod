@@ -1,31 +1,28 @@
 module crapi.proj/goservice
 
-go 1.14
+go 1.21
 
 require (
-	github.com/badoux/checkmail v1.2.1
+	github.com/badoux/checkmail v0.0.0-20200623144435-f9f80cb795fa
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/gofrs/uuid v4.2.0+incompatible // indirect
-	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/google/uuid v1.3.0 // indirect
-	github.com/gorilla/mux v1.8.0
-	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/joho/godotenv v1.4.0
-	github.com/klauspost/compress v1.15.9 // indirect
-	github.com/kr/pretty v0.3.0 // indirect
-	github.com/lib/pq v1.10.6 // indirect
+	github.com/gorilla/mux v1.7.4
+	github.com/jinzhu/gorm v1.9.14
+	github.com/joho/godotenv v1.3.0
 	github.com/lithammer/shortuuid v3.0.0+incompatible
-	github.com/montanaflynn/stats v0.6.6 // indirect
-	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	github.com/shopspring/decimal v1.3.1 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
-	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
-	go.mongodb.org/mongo-driver v1.10.1
-	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gorm.io/driver/postgres v1.3.8
-	gorm.io/gorm v1.23.8
+	go.mongodb.org/mongo-driver v1.3.5
+	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899
+)
+
+require (
+	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/golang/snappy v0.0.1 // indirect
+	github.com/google/uuid v1.1.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/klauspost/compress v1.9.5 // indirect
+	github.com/lib/pq v1.7.0 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc // indirect
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
+	golang.org/x/text v0.3.3 // indirect
 )

@@ -14,88 +14,96 @@
 
 package com.crapi.entity;
 
+import com.crapi.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import java.util.Arrays;
+import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-
-
 public class UserPrinciple implements UserDetails {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Long id;
+  private Long id;
 
-    private String name;
+  private String name;
 
-    private String email;
+  private String email;
 
-    @JsonIgnore
-    private String password;
+  private boolean mfaRequired;
 
-    private  GrantedAuthority authorities;
+  @JsonIgnore private String password;
 
-    public UserPrinciple(Long id,
-                         String email, String password,
-                         GrantedAuthority authorities) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.authorities = authorities;
-    }
+  private ERole role;
 
-    public static UserPrinciple build(User user) {
-        GrantedAuthority authorities =  new SimpleGrantedAuthority(user.getRole().toString());
+  private GrantedAuthority authorities;
 
+  public UserPrinciple(
+      Long id,
+      String email,
+      String password,
+      ERole role,
+      GrantedAuthority authorities,
+      boolean mfaRequired) {
+    this.id = id;
+    this.name = email;
+    this.email = email;
+    this.role = role;
+    this.password = password;
+    this.authorities = authorities;
+    this.mfaRequired = mfaRequired;
+  }
 
-        return new UserPrinciple(
-                user.getId(),
-                user.getEmail(),
-                user.getPassword(),
-                authorities
-        );
-    }
+  public static UserPrinciple build(User user) {
+    GrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().toString());
+    return new UserPrinciple(
+        user.getId(),
+        user.getEmail(),
+        user.getPassword(),
+        user.getRole(),
+        authorities,
+        user.isMfaRequired());
+  }
 
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    return Arrays.asList(authorities);
+  }
 
-        return Arrays.asList(authorities);
-    }
+  @Override
+  public String getPassword() {
+    return password;
+  }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+  @Override
+  public String getUsername() {
+    return email;
+  }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return mfaRequired ? false : true;
+  }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+  public ERole getRole() {
+    return role;
+  }
 }

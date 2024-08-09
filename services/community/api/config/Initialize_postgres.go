@@ -19,9 +19,10 @@ import (
 	"log"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
-	"gorm.io/driver/postgres"
+	"github.com/jinzhu/gorm"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 //
@@ -37,12 +38,12 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 
 	if Dbdriver == "postgres" {
 		DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
-		server.DB, err = gorm.Open(postgres.Open(DBURL), &gorm.Config{})
+		server.DB, err = gorm.Open(Dbdriver, DBURL)
 		if err != nil {
 			log.Fatalf("Cannot connect to %s database", err)
 
 		} else {
-			log.Println("We are connected to the %s database", Dbdriver)
+			log.Printf("We are connected to the %s database", Dbdriver)
 		}
 	}
 

@@ -12,16 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import React from "react";
 
 export const PASSWORD_INFO =
   "Password must be of length 8-16 characters having one lower case, one upper case and one numeric character.";
 export const NAME_REQUIRED = "Please enter your full name!";
-export const EMAIL_REQUIRED = "MAKE SURE TO USE A FAKE EMAIL ADDRESS (eg: neo@thematrix.org)";
+export const EMAIL_REQUIRED = "Please enter a valid email!";
 export const PHONE_NO_REQUIRED = "Please enter phone number";
 export const INVALID_PHONE = "Contact number should have only numbers and -";
 export const PASSWORD_REQUIRED = "Please enter your password";
-export const INVALID_PASSWORD =
-  "Password should contain at least one digit, one small letter and one capital letter and should at least contain 8 characters.";
+export const INVALID_PASSWORD = (
+  <>
+    Password should contain at least one digit, one small letter, one capital
+    letter and one special character.
+    <br />
+    Should be at least contain 8 characters and maximum 16 characters.
+    <br />
+    Allowed special characters are #$@!%&*?
+  </>
+);
 export const CONFIRM_PASSWORD = "Please confirm your password!";
 export const PASSWORD_DO_NOT_MATCH = "Passwords do not match!";
 export const OTP_REQUIRED = "Please enter the OTP!";
@@ -66,11 +75,13 @@ export const VIDEO_NOT_CONVERTED = "Could not convert video";
 export const NO_PRODUCTS = "Could not get product details";
 export const PRODUCT_NOT_BOUGHT = "Try again after sometime...";
 export const NO_ORDERS = "Could not get orders";
+export const NO_ORDER = "Could not get order";
 export const ORDER_NOT_RETURNED = "Could not return order";
 export const INVALID_COUPON_CODE = "Invalid Coupon Code";
 export const COUPON_APPLIED = "Coupon applied";
 export const COUPON_NOT_APPLIED = "Could not validate coupon";
 export const INVALID_CREDS = "Invalid Username or Password";
+export const INVALID_CODE_CREDS = "Invalid Email or Code";
 export const SIGN_UP_SUCCESS = "User Registered Successfully!";
 export const SIGN_UP_FAILED = "Could not sign up";
 export const OTP_SENT = "OTP has been sent to your registered emailid";

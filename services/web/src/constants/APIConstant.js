@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 
-import { crapienv } from "../config.js"
+import { crapienv } from "../config.js";
 
 export const APIService = {
-  JAVA_MICRO_SERVICES: crapienv.JAVA_MICRO_SERVICES,
-  PYTHON_MICRO_SERVICES: crapienv.PYTHON_MICRO_SERVICES,
-  GO_MICRO_SERVICES: crapienv.GO_MICRO_SERVICES,
+  IDENTITY_SERVICE: crapienv.IDENTITY_SERVICE,
+  WORKSHOP_SERVICE: crapienv.WORKSHOP_SERVICE,
+  COMMUNITY_SERVICE: crapienv.COMMUNITY_SERVICE,
 };
 
 export const requestURLS = {
-
   LOGIN: "api/auth/login",
+  UNLOCK: "api/auth/unlock",
   GET_USER: "api/v2/user/dashboard",
   SIGNUP: "api/auth/signup",
   RESET_PASSWORD: "api/v2/user/reset-password",
@@ -51,6 +51,7 @@ export const requestURLS = {
   GET_SERVICES: "api/mechanic/service_requests",
   BUY_PRODUCT: "api/shop/orders",
   GET_ORDERS: "api/shop/orders/all",
+  GET_ORDER_BY_ID: "api/shop/orders/<orderId>",
   RETURN_ORDER: "api/shop/orders/return_order",
   APPLY_COUPON: "api/shop/apply_coupon",
   ADD_NEW_POST: "api/v2/community/posts",

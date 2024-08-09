@@ -16,12 +16,13 @@ package controllers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"strconv"
 
-	"github.com/gorilla/mux"
 	"crapi.proj/goservice/api/models"
 	"crapi.proj/goservice/api/responses"
+	"github.com/gorilla/mux"
 )
 
 //AddNewPost add post in database,
@@ -30,7 +31,8 @@ import (
 //Server have database connection
 func (s *Server) AddNewPost(w http.ResponseWriter, r *http.Request) {
 
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
+	defer r.Body.Close()
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
@@ -60,7 +62,7 @@ func (s *Server) GetPostByID(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	//var autherID uint64
-	GetPost, er := models.GetPostByID(s.Client, s.DB, vars["postID"])
+	GetPost, er := models.GetPostByID(s.Client, vars["postID"])
 	if er != nil {
 		responses.ERROR(w, http.StatusBadRequest, er)
 	}
@@ -69,9 +71,35 @@ func (s *Server) GetPostByID(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+
 //GetPost Vulnerabilities
 func (s *Server) GetPost(w http.ResponseWriter, r *http.Request) {
-	posts, err := models.FindAllPost(s.Client, s.DB)
+	//post := models.Post{}
+	limit_param := r.URL.Query().Get("limit")
+	var limit int64 = 30
+	err := error(nil)
+	if limit_param != "" {
+		// Parse limit_param and set to limit
+		limit, err = strconv.ParseInt(limit_param, 10, 64)
+		if err != nil {
+			limit = 30
+		}
+	}
+	if limit > 50 {
+		limit = 50
+	}
+
+	var offset int64 = 0
+	offset_param := r.URL.Query().Get("offset")
+	if offset_param != "" {
+		offset, err = strconv.ParseInt(offset_param, 10, 64)
+		if err != nil {
+			offset = 0
+		}
+	}
+	posts, err := models.FindAllPost(s.Client, offset, limit)
+
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
@@ -86,7 +114,8 @@ func (s *Server) GetPost(w http.ResponseWriter, r *http.Request) {
 func (s *Server) Comment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
+	defer r.Body.Close()
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
@@ -103,7 +132,7 @@ func (s *Server) Comment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	comment.ID = vars["postID"]
-	postData, er := models.CommentOnPost(s.Client, s.DB, comment)
+	postData, er := models.CommentOnPost(s.Client, comment)
 	if er != nil {
 		responses.ERROR(w, http.StatusInternalServerError, er)
 		return

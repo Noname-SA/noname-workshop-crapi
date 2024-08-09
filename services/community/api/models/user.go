@@ -16,12 +16,15 @@ package models
 
 import (
 	"errors"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/badoux/checkmail"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+
+	"encoding/base64"
 )
 
 
@@ -30,6 +33,7 @@ var autherID uint64
 var nickname string
 var userEmail string
 
+var picurl string
 var vehicleID string
 
 //Author model
@@ -37,6 +41,7 @@ type Author struct {
 	Nickname  string    `gorm:"size:255;not null;unique" json:"nickname"`
 	Email     string    `gorm:"size:100;not null;unique" json:"email"`
 	VehicleID string    `gorm:"size:100;not null;unique" json:"vehicleid"`
+	Picurl    string    `gorm:"size:30000;not null;unique" json:"profile_pic_url"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 }
 
@@ -57,36 +62,36 @@ func (u *Author) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "update":
 		if u.Nickname == "" {
-			return errors.New("Required Nickname")
+			return errors.New("required nickname")
 		}
 		if u.Email == "" {
-			return errors.New("Required Email")
+			return errors.New("required email")
 		}
 		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
+			return errors.New("invalid email")
 		}
 		return nil
 
 	case "login":
 		if u.Nickname == "" {
-			return errors.New("Required Nickname")
+			return errors.New("required nickname")
 		}
 		if u.Email == "" {
-			return errors.New("Required Email")
+			return errors.New("required email")
 		}
 		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
+			return errors.New("invalid email")
 		}
 		return nil
 	default:
 		if u.Nickname == "" {
-			return errors.New("Required Nickname")
+			return errors.New("required nickname")
 		}
 		if u.Email == "" {
-			return errors.New("Required Email")
+			return errors.New("required email")
 		}
 		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
+			return errors.New("invalid email")
 		}
 		return nil
 	}
@@ -98,21 +103,34 @@ func FindAuthorByEmail(email string, db *gorm.DB) (*uint64, error) {
 	var id uint64
 	var number *uint64
 	var name string
+	var picture []byte
 	var uuid string
 	userEmail = email
 
 	//fetch id and number from for token user
 	row := db.Table("user_login").Where("email LIKE ?", email).Select("id,number").Row()
 
-	row.Scan(&id, &number)
+	err = row.Scan(&id, &number)
+	if err != nil {
+		log.Println("Error in FindAuthorByEmail", err)
+	}
 
 	autherID = id
 	//fetch name and picture from for token user
-	row1 := db.Table("user_details").Where("user_id = ?", id).Select("name").Row()
-	row1.Scan(&name)
+	row1 := db.Table("user_details").Where("user_id = ?", id).Select("name, lo_get(picture)").Row()
+	err = row1.Scan(&name, &picture)
+	if err != nil {
+		log.Println("Error in FindAuthorByEmail", err)
+	}
+	if len(picture) > 0 {
+		picurl = "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(picture)
+	}
 	nickname = name
 	row2 := db.Table("vehicle_details").Where("owner_id = ?", id).Select("uuid").Row()
-	row2.Scan(&uuid)
+	err = row2.Scan(&uuid)
+	if err != nil {
+		log.Println("Error in FindAuthorByEmail", err)
+	}
 	vehicleID = uuid
 	return number, err
 }

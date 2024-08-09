@@ -20,7 +20,7 @@ import (
 
 	"crapi.proj/goservice/api/auth"
 	"crapi.proj/goservice/api/responses"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 //SetMiddlewareJSON set content type and options

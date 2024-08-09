@@ -15,4 +15,9 @@
 
 set -x
 cd "$(dirname $0)"
-docker build --no-cache -t ${DOCKER_REPO}/crapi-identity:${VERSION:-latest} .
+docker build -t ${DOCKER_REPO}/crapi-identity:${VERSION:-latest} .
+retVal=$?
+if [ $retVal -ne 0 ]; then
+    echo "Error building crapi-identity image"
+    exit $retVal
+fi

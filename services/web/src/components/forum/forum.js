@@ -13,46 +13,77 @@
  * limitations under the License.
  */
 
-import './style.css'
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { PageHeader, Row, Col, Layout, Descriptions, Card, Button, Avatar, Typography } from 'antd'
-import { PlusOutlined, UserOutlined } from '@ant-design/icons'
-import { formatDateFromIso } from '../../utils'
+import "./style.css";
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import {
+  PageHeader,
+  Row,
+  Col,
+  Layout,
+  Descriptions,
+  Card,
+  Button,
+  Avatar,
+  Typography,
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { formatDateFromIso } from "../../utils";
+import defaultProficPic from "../../assets/default_profile_pic.png";
 
-const { Content } = Layout
-const { Meta } = Card
-const { Paragraph } = Typography
+const { Content } = Layout;
+const { Meta } = Card;
+const { Paragraph } = Typography;
 
-const Forum = props => {
-  const { posts } = props
+const Forum = (props) => {
+  const { posts, prevOffset, nextOffset } = props;
 
-  const renderAvatar = authorid => <Avatar size='large' src={`/identity/api/v2/avatar/${authorid}`} icon={<UserOutlined />} />
-
+  const renderAvatar = (url) => (
+    <Avatar src={url || defaultProficPic} size="large" />
+  );
+  console.log("Prev offset", prevOffset);
+  console.log("Next offset", nextOffset);
   return (
-    <Layout className='page-container'>
+    <Layout className="page-container">
       <PageHeader
-        title='Forum'
-        className='page-header'
+        title="Forum"
+        className="page-header"
         extra={[
-          <Button type='primary' shape='round' icon={<PlusOutlined />} size='large' key='add-coupons' onClick={() => props.history.push('/new-post')}>
+          <Button
+            type="primary"
+            shape="round"
+            icon={<PlusOutlined />}
+            size="large"
+            key="add-coupons"
+            onClick={() => props.history.push("/new-post")}
+          >
             New Post
           </Button>,
         ]}
       />
       <Content>
         <Row gutter={[40, 40]}>
-          {posts.map(post => (
+          {posts.map((post) => (
             <Col key={post.id}>
-              <Card hoverable onClick={() => props.history.push(`/post?post_id=${post.id}`)}>
-                <Meta avatar={renderAvatar(post.authorid)} title={post.title} />
-                <Descriptions size='small' col={2}>
-                  <Descriptions.Item label='Posted by'>{post.author.nickname}</Descriptions.Item>
-                  <Descriptions.Item label='Posted on'>{formatDateFromIso(post.CreatedAt)}</Descriptions.Item>
+              <Card
+                hoverable
+                onClick={() => props.history.push(`/post?post_id=${post.id}`)}
+              >
+                <Meta
+                  avatar={renderAvatar(post.author.profile_pic_url)}
+                  title={post.title}
+                />
+                <Descriptions size="small" col={2}>
+                  <Descriptions.Item label="Posted by">
+                    {post.author.nickname}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Posted on">
+                    {formatDateFromIso(post.CreatedAt)}
+                  </Descriptions.Item>
                 </Descriptions>
-                <Typography className='post-content'>
-                  {post.content.split('\n').map(para => (
+                <Typography className="post-content">
+                  {post.content.split("\n").map((para) => (
                     <Paragraph key={para}>{para}</Paragraph>
                   ))}
                 </Typography>
@@ -60,19 +91,43 @@ const Forum = props => {
             </Col>
           ))}
         </Row>
+        <Row justify="center">
+          <Button
+            type="primary"
+            shape="round"
+            size="large"
+            onClick={() => props.handleOffsetChange(prevOffset)}
+            disabled={prevOffset === null}
+          >
+            Previous
+          </Button>
+          <Button
+            type="primary"
+            shape="round"
+            size="large"
+            onClick={() => props.handleOffsetChange(nextOffset)}
+            disabled={!nextOffset}
+          >
+            Next
+          </Button>
+        </Row>
       </Content>
     </Layout>
-  )
-}
+  );
+};
 
 Forum.propTypes = {
   history: PropTypes.object,
   posts: PropTypes.array,
-  accessToken: PropTypes.string,
-}
+  prevOffset: PropTypes.number,
+  nextOffset: PropTypes.number,
+  handleOffsetChange: PropTypes.func,
+};
 
-const mapStateToProps = ({ userReducer: { accessToken }, communityReducer: { posts } }) => {
-  return { posts, accessToken }
-}
+const mapStateToProps = ({
+  communityReducer: { posts, prevOffset, nextOffset },
+}) => {
+  return { posts, prevOffset, nextOffset };
+};
 
-export default connect(mapStateToProps)(Forum)
+export default connect(mapStateToProps)(Forum);

@@ -13,11 +13,20 @@
  * limitations under the License.
  */
 
-import { put, takeLatest } from 'redux-saga/effects'
-import { APIService, requestURLS } from '../constants/APIConstant'
-import actionTypes from '../constants/actionTypes'
-import responseTypes from '../constants/responseTypes'
-import { NO_PRODUCTS, PRODUCT_NOT_BOUGHT, NO_ORDERS, ORDER_NOT_RETURNED, INVALID_COUPON_CODE, COUPON_APPLIED, COUPON_NOT_APPLIED } from '../constants/messages'
+import { put, takeLatest } from "redux-saga/effects";
+import { APIService, requestURLS } from "../constants/APIConstant";
+import actionTypes from "../constants/actionTypes";
+import responseTypes from "../constants/responseTypes";
+import {
+  NO_PRODUCTS,
+  PRODUCT_NOT_BOUGHT,
+  NO_ORDER,
+  NO_ORDERS,
+  ORDER_NOT_RETURNED,
+  INVALID_COUPON_CODE,
+  COUPON_APPLIED,
+  COUPON_NOT_APPLIED,
+} from "../constants/messages";
 
 /**
  * get the list of products
@@ -26,84 +35,91 @@ import { NO_PRODUCTS, PRODUCT_NOT_BOUGHT, NO_ORDERS, ORDER_NOT_RETURNED, INVALID
  * callback : callback method
  */
 export function* getProducts(param) {
-  const { accessToken, callback } = param
-  let recievedResponse = {}
+  const { callback, accessToken } = param;
+  let recievedResponse = {};
+  let offset = param.offset ? param.offset : 0;
   try {
-    yield put({ type: actionTypes.FETCHING_DATA })
-    const getUrl = APIService.PYTHON_MICRO_SERVICES + requestURLS.GET_PRODUCTS
+    yield put({ type: actionTypes.FETCHING_DATA });
+    const getUrl =
+      APIService.WORKSHOP_SERVICE +
+      requestURLS.GET_PRODUCTS +
+      `?limit=30&offset=${offset}`;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-    }
+    };
     const ResponseJson = yield fetch(getUrl, {
       headers,
-      method: 'GET',
-      credentials: 'omit',
-    }).then(response => {
-      recievedResponse = response
-      return response.json()
-    })
+      method: "GET",
+    }).then((response) => {
+      recievedResponse = response;
+      return response.json();
+    });
 
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
     if (recievedResponse.ok) {
       yield put({
         type: actionTypes.BALANCE_CHANGED,
         payload: { availableCredit: ResponseJson.credit },
-      })
+      });
       yield put({
         type: actionTypes.FETCHED_PRODUCTS,
-        payload: { products: ResponseJson.products },
-      })
-      callback(responseTypes.SUCCESS, ResponseJson)
+        payload: {
+          products: ResponseJson.products,
+          prevOffset: ResponseJson.previous_offset,
+          nextOffset: ResponseJson.next_offset,
+        },
+      });
+      callback(responseTypes.SUCCESS, ResponseJson);
     } else {
-      callback(responseTypes.FAILURE, ResponseJson.message)
+      callback(responseTypes.FAILURE, ResponseJson.message);
     }
   } catch (e) {
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
-    callback(responseTypes.FAILURE, NO_PRODUCTS)
+    console.log(e);
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    callback(responseTypes.FAILURE, NO_PRODUCTS);
   }
 }
 
 /**
  * buy a product
- * @param { accessToken, callback, product_id} param
+ * @param { callback, accessToken, product_id} param
  * accessToken: access token of the user
  * callback : callback method
  * product_id: id of the product which is to be bought
  */
 export function* buyProduct(param) {
-  const { accessToken, callback, productId } = param
-  let recievedResponse = {}
+  const { accessToken, callback, productId } = param;
+  let recievedResponse = {};
   try {
-    yield put({ type: actionTypes.FETCHING_DATA })
-    const postUrl = APIService.PYTHON_MICRO_SERVICES + requestURLS.BUY_PRODUCT
+    yield put({ type: actionTypes.FETCHING_DATA });
+    const postUrl = APIService.WORKSHOP_SERVICE + requestURLS.BUY_PRODUCT;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-    }
+    };
     const ResponseJson = yield fetch(postUrl, {
       headers,
-      method: 'POST',
-      credentials: 'omit',
+      method: "POST",
       body: JSON.stringify({ product_id: productId, quantity: 1 }),
-    }).then(response => {
-      recievedResponse = response
-      return response.json()
-    })
+    }).then((response) => {
+      recievedResponse = response;
+      return response.json();
+    });
 
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
     if (recievedResponse.ok) {
       yield put({
         type: actionTypes.BALANCE_CHANGED,
         payload: { availableCredit: ResponseJson.credit },
-      })
-      callback(responseTypes.SUCCESS, ResponseJson.message)
+      });
+      callback(responseTypes.SUCCESS, ResponseJson.message);
     } else {
-      callback(responseTypes.FAILURE, ResponseJson.message)
+      callback(responseTypes.FAILURE, ResponseJson.message);
     }
   } catch (e) {
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
-    callback(responseTypes.FAILURE, PRODUCT_NOT_BOUGHT)
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    callback(responseTypes.FAILURE, PRODUCT_NOT_BOUGHT);
   }
 }
 
@@ -114,37 +130,85 @@ export function* buyProduct(param) {
  * callback : callback method
  */
 export function* getOrders(param) {
-  const { accessToken, callback } = param
-  let recievedResponse = {}
+  const { accessToken, callback } = param;
+  let recievedResponse = {};
   try {
-    yield put({ type: actionTypes.FETCHING_DATA })
-    const getUrl = APIService.PYTHON_MICRO_SERVICES + requestURLS.GET_ORDERS
+    yield put({ type: actionTypes.FETCHING_DATA });
+    let offset = param.offset ? param.offset : 0;
+    const getUrl =
+      APIService.WORKSHOP_SERVICE +
+      requestURLS.GET_ORDERS +
+      `?limit=30&offset=${offset}`;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-    }
+    };
     const ResponseJson = yield fetch(getUrl, {
       headers,
-      credentials: 'omit',
-      method: 'GET',
-    }).then(response => {
-      recievedResponse = response
-      return response.json()
-    })
+      method: "GET",
+    }).then((response) => {
+      recievedResponse = response;
+      return response.json();
+    });
 
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
     if (recievedResponse.ok) {
       yield put({
         type: actionTypes.FETCHED_ORDERS,
-        payload: { orders: ResponseJson.orders },
-      })
-      callback(responseTypes.SUCCESS, ResponseJson)
+        payload: {
+          orders: ResponseJson.orders,
+          prevOffset: ResponseJson.previous_offset,
+          nextOffset: ResponseJson.next_offset,
+        },
+      });
+      callback(responseTypes.SUCCESS, ResponseJson);
     } else {
-      callback(responseTypes.FAILURE, ResponseJson.message)
+      callback(responseTypes.FAILURE, ResponseJson.message);
     }
   } catch (e) {
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
-    callback(responseTypes.FAILURE, NO_ORDERS)
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    callback(responseTypes.FAILURE, NO_ORDERS);
+  }
+}
+
+/**
+ * Get an order details
+ * @param { accessToken, callback, orderId } param
+ * accessToken: access token of the user
+ * callback : callback method
+ * orderId: id of the order to be returned
+ */
+export function* getOrderById(param) {
+  const { accessToken, callback, orderId } = param;
+  let recievedResponse = {};
+  try {
+    yield put({ type: actionTypes.FETCHING_DATA });
+    const getUrl = APIService.WORKSHOP_SERVICE + requestURLS.GET_ORDER_BY_ID;
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    };
+    const ResponseJson = yield fetch(getUrl.replace("<orderId>", orderId), {
+      headers,
+      method: "GET",
+    }).then((response) => {
+      recievedResponse = response;
+      return response.json();
+    });
+
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    if (recievedResponse.ok) {
+      yield put({
+        type: actionTypes.FETCHED_ORDER,
+        payload: { orderId: orderId, order: ResponseJson.order },
+      });
+      callback(responseTypes.SUCCESS, ResponseJson.order);
+    } else {
+      callback(responseTypes.FAILURE, ResponseJson.message);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    callback(responseTypes.FAILURE, NO_ORDER);
   }
 }
 
@@ -156,37 +220,36 @@ export function* getOrders(param) {
  * orderId: id of the order to be returned
  */
 export function* returnOrder(param) {
-  const { accessToken, callback, orderId } = param
-  let recievedResponse = {}
+  const { accessToken, callback, orderId } = param;
+  let recievedResponse = {};
   try {
-    yield put({ type: actionTypes.FETCHING_DATA })
-    const postUrl = APIService.PYTHON_MICRO_SERVICES + requestURLS.RETURN_ORDER
+    yield put({ type: actionTypes.FETCHING_DATA });
+    const postUrl = APIService.WORKSHOP_SERVICE + requestURLS.RETURN_ORDER;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-    }
+    };
     const ResponseJson = yield fetch(`${postUrl}?order_id=${orderId}`, {
       headers,
-      credentials: 'omit',
-      method: 'POST',
-    }).then(response => {
-      recievedResponse = response
-      return response.json()
-    })
+      method: "POST",
+    }).then((response) => {
+      recievedResponse = response;
+      return response.json();
+    });
 
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
     if (recievedResponse.ok) {
       yield put({
         type: actionTypes.ORDER_RETURNED,
         payload: { order: ResponseJson.order, orderId },
-      })
-      callback(responseTypes.SUCCESS, ResponseJson)
+      });
+      callback(responseTypes.SUCCESS, ResponseJson);
     } else {
-      callback(responseTypes.FAILURE, ResponseJson.message)
+      callback(responseTypes.FAILURE, ResponseJson.message);
     }
   } catch (e) {
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
-    callback(responseTypes.FAILURE, ORDER_NOT_RETURNED)
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    callback(responseTypes.FAILURE, ORDER_NOT_RETURNED);
   }
 }
 
@@ -198,65 +261,64 @@ export function* returnOrder(param) {
  * couponCode: coupon code of the coupon
  */
 export function* applyCoupon(param) {
-  const { accessToken, callback, couponCode } = param
-  let recievedResponse = {}
+  const { accessToken, callback, couponCode } = param;
+  let recievedResponse = {};
   try {
-    yield put({ type: actionTypes.FETCHING_DATA })
-    let postUrl = APIService.GO_MICRO_SERVICES + requestURLS.VALIDATE_COUPON
+    yield put({ type: actionTypes.FETCHING_DATA });
+    let postUrl = APIService.COMMUNITY_SERVICE + requestURLS.VALIDATE_COUPON;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-    }
+    };
     const CouponJson = yield fetch(postUrl, {
       headers,
-      method: 'POST',
-      credentials: 'omit',
+      method: "POST",
       body: JSON.stringify({ coupon_code: couponCode }),
-    }).then(response => {
-      recievedResponse = response
-      if (recievedResponse.ok) return response.json()
-      return response
-    })
+    }).then((response) => {
+      recievedResponse = response;
+      if (recievedResponse.ok) return response.json();
+      return response;
+    });
 
     if (!recievedResponse.ok) {
-      yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
-      callback(responseTypes.FAILURE, INVALID_COUPON_CODE)
+      yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+      callback(responseTypes.FAILURE, INVALID_COUPON_CODE);
     } else {
-      postUrl = APIService.PYTHON_MICRO_SERVICES + requestURLS.APPLY_COUPON
+      postUrl = APIService.WORKSHOP_SERVICE + requestURLS.APPLY_COUPON;
       const ResponseJson = yield fetch(postUrl, {
         headers,
-        method: 'POST',
-        credentials: 'omit',
+        method: "POST",
         body: JSON.stringify({
           coupon_code: CouponJson.coupon_code,
           amount: parseFloat(CouponJson.amount),
         }),
-      }).then(response => {
-        recievedResponse = response
-        return response.json()
-      })
+      }).then((response) => {
+        recievedResponse = response;
+        return response.json();
+      });
 
-      yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
+      yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
       if (recievedResponse.ok) {
         yield put({
           type: actionTypes.BALANCE_CHANGED,
           payload: { availableCredit: ResponseJson.credit },
-        })
-        callback(responseTypes.SUCCESS, COUPON_APPLIED)
+        });
+        callback(responseTypes.SUCCESS, COUPON_APPLIED);
       } else {
-        callback(responseTypes.FAILURE, ResponseJson.message)
+        callback(responseTypes.FAILURE, ResponseJson.message);
       }
     }
   } catch (e) {
-    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse })
-    callback(responseTypes.FAILURE, COUPON_NOT_APPLIED)
+    yield put({ type: actionTypes.FETCHED_DATA, payload: recievedResponse });
+    callback(responseTypes.FAILURE, COUPON_NOT_APPLIED);
   }
 }
 
 export function* shopActionWatcher() {
-  yield takeLatest(actionTypes.GET_PRODUCTS, getProducts)
-  yield takeLatest(actionTypes.BUY_PRODUCT, buyProduct)
-  yield takeLatest(actionTypes.GET_ORDERS, getOrders)
-  yield takeLatest(actionTypes.RETURN_ORDER, returnOrder)
-  yield takeLatest(actionTypes.APPLY_COUPON, applyCoupon)
+  yield takeLatest(actionTypes.GET_PRODUCTS, getProducts);
+  yield takeLatest(actionTypes.BUY_PRODUCT, buyProduct);
+  yield takeLatest(actionTypes.GET_ORDERS, getOrders);
+  yield takeLatest(actionTypes.GET_ORDER_BY_ID, getOrderById);
+  yield takeLatest(actionTypes.RETURN_ORDER, returnOrder);
+  yield takeLatest(actionTypes.APPLY_COUPON, applyCoupon);
 }

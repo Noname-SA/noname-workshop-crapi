@@ -14,36 +14,43 @@
 
 package com.crapi.service;
 
-import com.crapi.entity.UserDetails;
-import com.crapi.model.*;
 import com.crapi.entity.User;
-
-import javax.servlet.http.HttpServletRequest;
+import com.crapi.model.*;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import org.springframework.http.ResponseEntity;
 
 public interface UserService {
 
-    CRAPIResponse registerUser(SignUpForm signUpRequest);
+  void updateUserToken(String jwt, String email);
 
-    void updateUserToken(String jwt, String email);
+  User updateUserPassword(String password, String email);
 
-    CRAPIResponse resetPassword(LoginForm loginForm, HttpServletRequest request) throws UnsupportedEncodingException;
+  CRAPIResponse resetPassword(LoginForm loginForm, HttpServletRequest request)
+      throws UnsupportedEncodingException;
 
-    DashboardResponse getUserByRequestToken(HttpServletRequest request);
+  CRAPIResponse verifyJwtToken(String token);
 
-    byte[] getUserAvatar(Long user_id, HttpServletRequest request);
+  DashboardResponse getUserByRequestToken(HttpServletRequest request);
 
-    CRAPIResponse changeEmailRequest(HttpServletRequest request,ChangeEmailForm loginForm);
+  CRAPIResponse changeEmailRequest(HttpServletRequest request, ChangeEmailForm loginForm);
 
-    CRAPIResponse verifyEmailToken(HttpServletRequest request,ChangeEmailForm changeEmailForm);
+  CRAPIResponse verifyEmailToken(HttpServletRequest request, ChangeEmailForm changeEmailForm);
 
-    User getUserFromToken(HttpServletRequest request);
+  User getUserFromToken(HttpServletRequest request);
 
-    CRAPIResponse loginWithEmailToken(LoginWithEmailToken loginWithEmailToken);
+  User getUserFromTokenWithoutValidation(HttpServletRequest request);
 
-    JwtResponse loginWithEmailTokenV2(LoginWithEmailToken loginWithEmailToken);
+  CRAPIResponse loginWithEmailToken(LoginWithEmailToken loginWithEmailToken);
 
-    JwtResponse authenticateUserLogin(LoginForm loginForm) throws UnsupportedEncodingException;
+  JwtResponse loginWithEmailTokenV2(LoginWithEmailToken loginWithEmailToken);
 
-    public UserDetails createUserDetails(String name, User user);
+  ResponseEntity<JwtResponse> authenticateUserLogin(LoginForm loginForm)
+      throws UnsupportedEncodingException;
+
+  JwtResponse unlockAccount(HttpServletRequest request, UnlockAccountForm unlockAccountForm);
+
+  CRAPIResponse lockAccount(HttpServletRequest request, LockAccountForm lockAccountForm);
+
+  ApiKeyResponse generateApiKey(HttpServletRequest request);
 }

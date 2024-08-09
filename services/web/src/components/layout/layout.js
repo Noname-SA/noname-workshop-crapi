@@ -36,7 +36,9 @@ import roleTypes from "../../constants/roleTypes";
 import ProfileContainer from "../../containers/profile/profile";
 import ShopContainer from "../../containers/shop/shop";
 import PastOrdersContainer from "../../containers/pastOrders/pastOrders";
+import OrderContainer from "../../containers/order/order";
 import ForumContainer from "../../containers/forum/forum";
+import UnlockContainer from "../../containers/unlock/unlock";
 import NewPostContainer from "../../containers/newPost/newPost";
 import PostContainer from "../../containers/post/post";
 
@@ -73,7 +75,7 @@ const AfterLogin = ({
             });
           } else {
             if (!componentRole || (componentRole && componentRole === userRole))
-              return <Component {...props} accessToken={accessToken} />;
+              return <Component {...props} />;
             if (userRole === roleTypes.ROLE_MECHANIC)
               return (
                 <Redirect
@@ -159,7 +161,7 @@ const mapDispatchToProps = {
  */
 const StyledComp = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )((props) => {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
@@ -178,6 +180,11 @@ const StyledComp = connect(
             <BeforeLogin
               path="/login"
               component={LoginContainer}
+              isLoggedIn={props.isLoggedIn}
+            />
+            <BeforeLogin
+              path="/unlock"
+              component={UnlockContainer}
               isLoggedIn={props.isLoggedIn}
             />
             <BeforeLogin
@@ -269,6 +276,15 @@ const StyledComp = connect(
               logOutUser={props.logOutUser}
             />
             <AfterLogin
+              path="/orders"
+              component={OrderContainer}
+              isLoggedIn={props.isLoggedIn}
+              componentRole={roleTypes.ROLE_USER}
+              userRole={props.role}
+              accessToken={props.accessToken}
+              logOutUser={props.logOutUser}
+            />
+            <AfterLogin
               path="/forum"
               component={ForumContainer}
               isLoggedIn={props.isLoggedIn}
@@ -304,8 +320,8 @@ const StyledComp = connect(
                         !props.isLoggedIn
                           ? "/login"
                           : props.role === roleTypes.ROLE_USER
-                          ? "/dashboard"
-                          : "/mechanic-dashboard"
+                            ? "/dashboard"
+                            : "/mechanic-dashboard"
                       }`,
                       state: { from: props.location },
                     }}

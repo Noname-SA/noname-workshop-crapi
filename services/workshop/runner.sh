@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 #
 # Licensed under the Apache License, Version 2.0 (the “License”);
@@ -13,10 +13,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Get script directory
+DIR="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 
-python3 manage.py migrate user --fake &&\
-python3 manage.py migrate crapi &&\
-python3 manage.py migrate db &&\
-python3 manage.py runserver 0.0.0.0:${SERVER_PORT}
+# Load the data
+echo "Check Django models"
+python3 manage.py migrate
 
-exec "$@"
+python3 manage.py check &&\
+python3 manage.py health_check
+
+echo "Seeding the database"
+python3 manage.py seed_database
+
+echo "Starting Django server"
+if [ "$TLS_ENABLED" = "true" ] || [ "$TLS_ENABLED" = "1" ]; then
+  echo "TLS is ENABLED"
+  # if $TLS_CERTIFICATE and $TLS_KEY are not set, use the default ones
+  if [ "$TLS_CERTIFICATE" = "" ]; then
+    TLS_CERTIFICATE=$DIR/certs/server.crt
+  fi
+  if [ "$TLS_KEY" = "" ]; then
+    TLS_KEY=$DIR/certs/server.key
+  fi
+  echo "TLS_CERTIFICATE: $TLS_CERTIFICATE"
+  echo "TLS_KEY: $TLS_KEY"
+  # python3 manage.py runserver_plus --cert-file $TLS_CERTIFICATE --key-file $TLS_KEY --noreload 0.0.0.0:${SERVER_PORT}
+  gunicorn --workers=1 --threads=20  --timeout 60 --bind 0.0.0.0:${SERVER_PORT} --certfile $TLS_CERTIFICATE --keyfile $TLS_KEY --log-level=debug crapi_site.wsgi
+else
+  echo "TLS is DISABLED"
+  # python3 manage.py runserver 0.0.0.0:${SERVER_PORT} --noreload
+  gunicorn --workers=1 --threads=20  --timeout 60 --bind 0.0.0.0:${SERVER_PORT} --log-level=debug crapi_site.wsgi
+fi

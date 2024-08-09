@@ -12,24 +12,35 @@
 
 
 # Java Maven Build
-FROM maven:3.6-jdk-11 AS javabuild
-RUN mkdir /app
-COPY ./pom.xml /app/pom.xml
-RUN mvn -f /app/pom.xml dependency:go-offline -B 
-COPY ./src /app/src
-RUN mvn -f /app/pom.xml clean package -DskipTests
+FROM gradle:8.1-jdk17-focal AS gradlebuild
+WORKDIR /app
+COPY *.gradle.kts ./
+COPY gradle.properties ./
+# Only download dependencies
+# Eat the expected build failure since no source code has been copied yet
+RUN gradle clean build --no-daemon > /dev/null 2>&1 || true
+COPY src src
+RUN gradle build
+RUN gradle bootJar
 
 # Main Image
-FROM openjdk:11-jre-slim-buster
-
-#Java
+FROM openjdk:17.0-jdk-slim
+# #Java
 RUN apt-get -y update && apt-get -y install curl && apt-get -y clean
+# RUN apt-get -y update && apt-get -y install wget curl unzip && apt-get -y clean
+# RUN wget https://www.yourkit.com/download/docker/YourKit-JavaProfiler-2023.9-docker.zip -P /tmp/ && \
+#   unzip /tmp/YourKit-JavaProfiler-2023.9-docker.zip -d /usr/local && \
+#   rm /tmp/YourKit-JavaProfiler-2023.9-docker.zip
 RUN mkdir /app
-COPY --from=javabuild /app/target/user-microservices-1.0-SNAPSHOT.jar /app/user-microservices-1.0-SNAPSHOT.jar
+COPY --from=gradlebuild /app/build/libs/identity-service-1.0-SNAPSHOT.jar /app/identity-service-1.0-SNAPSHOT.jar
 
-ARG SERVER_PORT 
+ARG SERVER_PORT
 EXPOSE ${SERVER_PORT}
+EXPOSE 10001
 
 ENV JAVA_TOOL_OPTIONS "-Xmx128m"
 
-CMD java -jar /app/user-microservices-1.0-SNAPSHOT.jar
+COPY jwks.json default_jwks.json
+COPY entrypoint.sh /entrypoint.sh
+COPY health.sh /app/health.sh
+CMD [ "/entrypoint.sh"]
