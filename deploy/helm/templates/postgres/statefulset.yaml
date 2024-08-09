@@ -23,7 +23,6 @@ spec:
         - name: {{ .Values.postgresdb.name }}
           image: {{ .Values.postgresdb.image }}:{{ .Values.postgresdb.version }}
           imagePullPolicy: {{ .Values.postgresdb.imagePullPolicy }}
-          args: ["-c", "max_connections=500"]
           ports:
             - containerPort: {{ .Values.postgresdb.port }}
           envFrom:
