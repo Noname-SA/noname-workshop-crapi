@@ -9,7 +9,7 @@ imagePullPolicy: Always
 apiGatewayServiceUrl: https://api.mypremiumdealership.com
 apiGatewayServiceInstall: false
 apiGatewayPassword:
-tlsEnabled: false
+tlsEnabled: true
 jwtExpiration: 604800000
 logLevel: INFO
 
