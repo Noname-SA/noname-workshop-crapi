@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.web.service.name }}
+  labels:
+    release: {{ .Release.Name }}
+    {{- toYaml .Values.web.service.labels | nindent 4 }}
+spec:
+  ports:
+  - port: {{ .Values.web.port }}
+    name: nginx
+  type: ClusterIP
+  selector:
+    {{- toYaml .Values.web.serviceSelectorLabels | nindent 4 }}
