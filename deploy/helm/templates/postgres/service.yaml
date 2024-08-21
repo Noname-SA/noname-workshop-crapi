@@ -11,8 +11,5 @@ spec:
   ports:
   - port: {{ .Values.postgresdb.port }}
     name: postgres
-    targetPort: {{ .Values.postgresdb.port }}
-    nodePort: 30030
-  type: NodePort
   selector:
     {{- toYaml .Values.postgresdb.serviceSelectorLabels | nindent 4 }}
