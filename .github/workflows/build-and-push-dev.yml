@@ -26,3 +26,4 @@ jobs:
           tags: ${{ secrets.DOCKER_REPO }}/crapi-community:${{ secrets.DOCKER_TAG }}
           platforms: linux/amd64,linux/arm
           context: ./services/community
+          file: ./services/community/Dockerfile
