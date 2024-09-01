@@ -135,7 +135,7 @@ workshop:
 
 mailhog:
   name: mailhog
-  image: nnws/mailhog
+  image: nnws/crapi-mailhog
   webPort: 8025
   smtpPort: 1025
   replicaCount: 1
