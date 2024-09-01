@@ -25,5 +25,33 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_REPO }}/crapi-community:${{ secrets.DOCKER_TAG }}
-          platforms: linux/amd64,linux/arm
+          platforms: linux/arm/7
           context: ./services/community
+      - name: Build and Publish Identity
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_REPO }}/crapi-identity:${{ secrets.DOCKER_TAG }}
+          platforms: linux/arm/7
+          context: ./services/identity
+      - name: Build and Publish Workshop
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_REPO }}/crapi-workshop:${{ secrets.DOCKER_TAG }}
+          platforms: linux/arm/7
+          context: ./services/workshop
+      - name: Build and Publish Web
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_REPO }}/crapi-web:${{ secrets.DOCKER_TAG }}
+          platforms: linux/arm/7
+          context: ./services/web
+      - name: Build and Publish Mailhog
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_REPO }}/mailhog:${{ secrets.DOCKER_TAG }}
+          platforms: linux/arm/7
+          context: ./services/mailhog
