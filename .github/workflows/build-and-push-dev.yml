@@ -28,7 +28,7 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_REPO }}/crapi-${{ matrix.image }}:${{ secrets.DOCKER_TAG }}
-          platforms: linux/arm/8,linux/amd64
+          platforms: linux/arm64/8,linux/amd64
           context: ./services/${{ matrix.image }}
   build-and-publish-mailhog:
     runs-on: ubuntu-20.04
