@@ -12,23 +12,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Build images
-        run: ./deploy/docker/build-all.sh
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
-          VERSION: ${{ secrets.DOCKER_TAG }}
-      - name: Publish images
-        run: |
-          docker push ${DOCKER_REPO}/crapi-web:${VERSION}
-          docker push ${DOCKER_REPO}/crapi-community:${VERSION}
-          docker push ${DOCKER_REPO}/crapi-workshop:${VERSION}
-          docker push ${DOCKER_REPO}/crapi-identity:${VERSION}
-          docker push ${DOCKER_REPO}/mailhog:${VERSION}
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
-          VERSION: ${{ secrets.DOCKER_TAG }}
+      - name: Build and Publish Community
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_REPO }}/crapi-community:${{ secrets.DOCKER_TAG }}
+          platforms: linux/amd64,linux/arm
