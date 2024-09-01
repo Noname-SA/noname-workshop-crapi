@@ -9,6 +9,9 @@ jobs:
   build-and-publish-images:
     runs-on: ubuntu-20.04
     environment: development
+    strategy:
+      matrix:
+        image: ['identity', 'community', 'web', 'workshop']
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU
@@ -20,34 +23,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Build and Publish Community
+      - name: Build and Publish
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ secrets.DOCKER_REPO }}/crapi-community:${{ secrets.DOCKER_TAG }}
+          tags: ${{ secrets.DOCKER_REPO }}/crapi-${{ matrix.image }}:${{ secrets.DOCKER_TAG }}
           platforms: linux/arm,linux/amd64
-          context: ./services/community
-      - name: Build and Publish Identity
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: ${{ secrets.DOCKER_REPO }}/crapi-identity:${{ secrets.DOCKER_TAG }}
-          platforms: linux/arm,linux/amd64
-          context: ./services/identity
-      - name: Build and Publish Workshop
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: ${{ secrets.DOCKER_REPO }}/crapi-workshop:${{ secrets.DOCKER_TAG }}
-          platforms: linux/arm,linux/amd64
-          context: ./services/workshop
-      - name: Build and Publish Web
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: ${{ secrets.DOCKER_REPO }}/crapi-web:${{ secrets.DOCKER_TAG }}
-          platforms: linux/arm,linux/amd64
-          context: ./services/web
+          context: ./services/${{ matrix.image }}
+  build-and-publish-mailhog:
+    runs-on: ubuntu-20.04
+    environment: development
+    steps:
       - name: Build and Publish Mailhog
         uses: docker/build-push-action@v6
         with:
