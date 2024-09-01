@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-20.04
     environment: development
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -27,3 +25,4 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_REPO }}/crapi-community:${{ secrets.DOCKER_TAG }}
           platforms: linux/amd64,linux/arm
+          context: ./services/community
