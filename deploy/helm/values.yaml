@@ -6,8 +6,8 @@ jwtSecret: crapi
 enableLog4j: true
 enableShellInjection: true
 imagePullPolicy: Always
-apiGatewayServiceUrl: https://api.mypremiumdealership.com
-apiGatewayServiceInstall: false
+apiGatewayServiceUrl: https://gateway-service
+apiGatewayServiceInstall: true
 apiGatewayPassword:
 tlsEnabled: true
 jwtExpiration: 604800000
