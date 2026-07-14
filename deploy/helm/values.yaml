@@ -238,7 +238,7 @@ postgresdb:
 
 apiGatewayService:
   name: gateway-service
-  image: nnws/gateway-service
+  image: crapi/gateway-service
   port: 443
   replicaCount: 1
   service:
